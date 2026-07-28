@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1565C0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="expires" content="0">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Eu amo Santa Cruz">
+<meta name="description" content="Guia completo de Santa Cruz - Rádios, Classificados e Profissionais">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+<title>Eu amo Santa Cruz</title>
+<link rel="stylesheet" href="css/style.css?v=34">
+</head>
+<body>
+<div id="app">
+  <header class="app-header" id="appHeader">
+    <div class="header-inner">
+      <img class="header-logo" src="assets/logo-cabecalho.jpg" alt="Santa Cruz">
+      <h1 class="header-title">Eu amo Santa Cruz</h1>
+      <span class="user-badge hidden" id="userBadge"><span class="user-badge-name" id="userName"></span></span>
+      <button class="header-btn" id="authBtn" title="Minha Conta"><span class="material-icons-round" style="font-size:22px">person</span></button>
+      <button class="header-btn material-icons-round" id="refreshBtn" title="Atualizar">refresh</button>
+      <button class="header-btn material-icons-round" id="configBtn" title="Configurar">settings</button>
+    </div>
+  </header>
+
+  <div id="demoBanner" class="demo-banner hidden">
+    <span class="material-icons-round" style="font-size:16px">info</span>
+    Modo demonstração - <a href="#" id="bannerConfigLink" style="color:#fff;text-decoration:underline">configurar API da Planilha</a>
+  </div>
+
+  <main class="app-main" id="appMain">
+    <!-- HOME -->
+    <section id="page-home" class="page active">
+
+      <div class="weather-widget" id="weatherWidget">
+        <div class="weather-loading" id="weatherLoading">
+          <span class="material-icons-round">cloud</span> Carregando clima...
+        </div>
+        <div class="weather-content hidden" id="weatherContent">
+          <div class="weather-main">
+            <div class="weather-icon-wrap">
+              <span class="weather-icon material-icons-round" id="weatherIcon">wb_sunny</span>
+            </div>
+            <div class="weather-info">
+              <div class="weather-temp" id="weatherTemp">--°C</div>
+              <div class="weather-desc" id="weatherDesc">Carregando...</div>
+            </div>
+            <div class="weather-location">
+              <span class="material-icons-round" style="font-size:14px">location_on</span>
+              Santa Cruz do Rio Pardo/SP
+            </div>
+          </div>
+          <div class="weather-details">
+            <div class="weather-detail">
+              <span class="material-icons-round">water_drop</span>
+              <span class="weather-detail-label">Umidade</span>
+              <span class="weather-detail-value" id="weatherHumidity">--%</span>
+            </div>
+            <div class="weather-detail">
+              <span class="material-icons-round">air</span>
+              <span class="weather-detail-label">Vento</span>
+              <span class="weather-detail-value" id="weatherWind">-- km/h</span>
+            </div>
+            <div class="weather-detail">
+              <span class="material-icons-round">compress</span>
+              <span class="weather-detail-label">Pressão</span>
+              <span class="weather-detail-value" id="weatherPressure">-- hPa</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="quick-stats" id="quickStats">
+        <div class="stat-card" data-page="radios">
+          <span class="stat-icon material-icons-round">radio</span>
+          <span class="stat-number" id="statRadios">0</span>
+          <span class="stat-label">Rádios</span>
+        </div>
+        <div class="stat-card" data-page="classificados">
+          <span class="stat-icon material-icons-round">sell</span>
+          <span class="stat-number" id="statClassificados">0</span>
+          <span class="stat-label">Classificados</span>
+        </div>
+        <div class="stat-card" data-page="profissionais">
+          <span class="stat-icon material-icons-round">work</span>
+          <span class="stat-number" id="statProfissionais">0</span>
+          <span class="stat-label">Profissionais</span>
+        </div>
+      </div>
+
+
+      <div class="home-preview">
+        <section class="home-section">
+          <div class="home-section-header">
+            <h3>Rádios</h3>
+            <a href="#" class="home-section-link" data-page="radios">Ver todas</a>
+          </div>
+          <div class="home-radio-scroll" id="homeRadios"></div>
+        </section>
+        <section class="home-section">
+          <div class="home-section-header">
+            <h3>Últimos Classificados</h3>
+            <a href="#" class="home-section-link" data-page="classificados">Ver todos</a>
+          </div>
+          <div class="home-classif-scroll" id="homeClassif"></div>
+        </section>
+        <section class="home-section">
+          <div class="home-section-header">
+            <h3>Profissionais</h3>
+            <a href="#" class="home-section-link" data-page="profissionais">Ver todos</a>
+          </div>
+          <div class="home-prof-scroll" id="homeProf"></div>
+        </section>
+      </div>
+    </section>
+
+    <!-- RADIOS -->
+    <section id="page-radios" class="page">
+      <div class="page-header">
+        <h2><span class="material-icons-round">radio</span> Rádios Online</h2>
+      </div>
+      <p class="page-subtitle">Clique no logo da rádio para ouvir</p>
+      <div class="card-grid" id="radioGrid">
+        <div class="loading-spinner"><span class="material-icons-round">sync</span> Carregando...</div>
+      </div>
+    </section>
+
+    <!-- CLASSIFICADOS -->
+    <section id="page-classificados" class="page">
+      <div class="page-header">
+        <h2><span class="material-icons-round">sell</span> Classificados</h2>
+        <div class="page-header-actions">
+          <button class="btn-filter material-icons-round" id="myClassifBtn" title="Meus Anúncios">lock</button>
+          <button class="btn-filter material-icons-round" id="filterClassifBtn" title="Filtrar">filter_list</button>
+        </div>
+      </div>
+      <div class="filter-bar hidden" id="classifFilterBar">
+        <select id="classifCategoryFilter" class="form-select">
+          <option value="">Todas as categorias</option>
+          <option value="Veículos">Veículos</option>
+          <option value="Imóveis">Imóveis</option>
+          <option value="Eletrônicos">Eletrônicos</option>
+          <option value="Moda e Beleza">Moda e Beleza</option>
+          <option value="Casa e Jardim">Casa e Jardim</option>
+          <option value="Esportes">Esportes</option>
+          <option value="Serviços">Serviços</option>
+          <option value="Outros">Outros</option>
+        </select>
+      </div>
+      <div class="card-grid" id="classifGrid">
+        <div class="loading-spinner"><span class="material-icons-round">sync</span> Carregando...</div>
+      </div>
+      <button class="fab" id="fabClassif" title="Anunciar">
+        <span class="material-icons-round">add</span>
+      </button>
+    </section>
+
+    <!-- PROFISSIONAIS -->
+    <section id="page-profissionais" class="page">
+      <div class="page-header">
+        <h2><span class="material-icons-round">work</span> Guia de Profissionais</h2>
+        <div class="page-header-actions">
+          <button class="btn-filter material-icons-round" id="myProfBtn" title="Meus Cadastros">lock</button>
+          <button class="btn-filter material-icons-round" id="filterProfBtn" title="Filtrar">filter_list</button>
+        </div>
+      </div>
+      <div class="filter-bar hidden" id="profFilterBar">
+        <select id="profCategoryFilter" class="form-select">
+          <option value="">Todas as profissões</option>
+          <option value="Eletricista">Eletricista</option>
+          <option value="Pedreiro">Pedreiro</option>
+          <option value="Encanador">Encanador</option>
+          <option value="Pintor">Pintor</option>
+          <option value="Frete e Mudanças">Frete e Mudanças</option>
+          <option value="Jardineiro">Jardineiro</option>
+          <option value="Marceneiro">Marceneiro</option>
+          <option value="Mecânico">Mecânico</option>
+          <option value="Chaveiro">Chaveiro</option>
+          <option value="TI / Informática">TI / Informática</option>
+          <option value="Fotógrafo">Fotógrafo</option>
+          <option value="Personal Trainer">Personal Trainer</option>
+          <option value="Diarista">Diarista</option>
+          <option value="Babá">Babá</option>
+          <option value="Outros">Outros</option>
+        </select>
+      </div>
+      <div class="card-grid" id="profGrid">
+        <div class="loading-spinner"><span class="material-icons-round">sync</span> Carregando...</div>
+      </div>
+      <button class="fab" id="fabProf" title="Cadastrar">
+        <span class="material-icons-round">add</span>
+      </button>
+    </section>
+
+    <!-- CONFIG -->
+    <section id="page-config" class="page">
+      <div class="page-header">
+        <h2><span class="material-icons-round">settings</span> Configuração</h2>
+      </div>
+
+      <div class="config-section">
+        <h3>Conexão com Google Planilhas</h3>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">
+          Cole aqui a URL do seu Google Apps Script (implantado como Aplicativo Web)
+        </p>
+        <div class="form-group">
+          <label class="form-label">URL da API</label>
+          <input type="url" class="form-input" id="configUrl"
+            placeholder="https://script.google.com/macros/s/SEU_ID/exec">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Senha de Administrador <span class="form-hint">permite editar/excluir qualquer item</span></label>
+          <input type="password" class="form-input" id="configAdminSenha" placeholder="Senha master para gerenciar tudo">
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+          <button class="form-btn form-btn-primary" id="configTestBtn" style="flex:1;min-width:120px">Testar Conexão</button>
+          <button class="form-btn form-btn-secondary" id="configSaveBtn" style="flex:1;min-width:120px">Salvar e Ativar</button>
+          <button class="form-btn form-btn-secondary" id="configResetBtn" style="flex:0;min-width:100px;background:#fee2e2;color:#991b1b">Resetar Demo</button>
+        </div>
+        <div id="configStatus" class="config-status hidden"></div>
+        <pre id="configErrorDetails" class="hidden" style="margin-top:8px;padding:8px;background:var(--bg);border-radius:4px;font-size:11px;overflow-x:auto;white-space:pre-wrap;color:var(--text-secondary)"></pre>
+      </div>
+
+      <div class="config-section" id="debugSection" style="display:none">
+        <h3>Resposta da API (última requisição)</h3>
+        <pre id="debugRawResponse" style="margin-top:8px;padding:8px;background:#1a1a2e;color:#e0e0e0;border-radius:4px;font-size:11px;overflow-x:auto;white-space:pre-wrap;max-height:300px"></pre>
+      </div>
+
+      <div class="config-section">
+        <h3>Como Configurar</h3>
+        <ol style="font-size:13px;color:var(--text-secondary);line-height:1.8;padding-left:20px">
+          <li>Crie uma planilha no Google Sheets com 3 abas: <strong>Radios</strong>, <strong>Classificados</strong>, <strong>Profissionais</strong></li>
+          <li>Na primeira linha de cada aba, coloque os cabeçalhos (veja o arquivo <code>Code.gs</code>)</li>
+          <li>Vá em <strong>Extensões → Apps Script</strong></li>
+          <li>Cole o conteúdo do arquivo <code>google-apps-script/Code.gs</code></li>
+          <li>Clique em <strong>Implantar → Nova implantação → Aplicativo Web</strong></li>
+          <li>Execute como: <strong>Você</strong> | Acesso: <strong>Qualquer um</strong></li>
+          <li>Copie a URL gerada e cole aqui ao lado</li>
+          <li>Clique em <strong>Testar Conexão</strong> para verificar</li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <div id="audioMiniPlayer" class="audio-mini-player hidden">
+    <div class="player-info">
+      <img id="playerLogo" src="" alt="" class="player-logo">
+      <div class="player-text">
+        <span id="playerName" class="player-name">Rádio</span>
+        <span id="playerStatus" class="player-status">Carregando...</span>
+      </div>
+    </div>
+    <div class="player-controls">
+      <button id="playerPlayBtn" class="player-btn material-icons-round">pause</button>
+      <button id="playerStopBtn" class="player-btn material-icons-round">stop</button>
+      <input type="range" id="playerVolume" class="player-volume" min="0" max="1" step="0.05" value="0.8">
+    </div>
+    <audio id="audioElement" preload="none"></audio>
+  </div>
+
+  <nav class="bottom-nav" id="bottomNav">
+    <a href="#" class="nav-item active" data-page="home">
+      <span class="material-icons-round">home</span>
+      <span class="nav-label">Início</span>
+    </a>
+    <a href="#" class="nav-item" data-page="radios">
+      <span class="material-icons-round">radio</span>
+      <span class="nav-label">Rádios</span>
+    </a>
+    <a href="#" class="nav-item" data-page="classificados">
+      <span class="material-icons-round">sell</span>
+      <span class="nav-label">Classificados</span>
+    </a>
+    <a href="#" class="nav-item" data-page="profissionais">
+      <span class="material-icons-round">work</span>
+      <span class="nav-label">Profissionais</span>
+    </a>
+  </nav>
+
+  <div id="modalOverlay" class="modal-overlay hidden">
+    <div class="modal-container" id="modalContainer">
+      <div class="modal-header">
+        <h3 id="modalTitle"></h3>
+        <button class="modal-close material-icons-round" id="modalClose">close</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+</div>
+
+<script src="js/api.js?v=34"></script>
+<script src="js/radios.js?v=34"></script>
+<script src="js/classificados.js?v=34"></script>
+<script src="js/profissionais.js?v=34"></script>
+<script src="js/auth.js?v=34"></script>
+<script src="js/app.js?v=34"></script>
+</body>
+</html>
