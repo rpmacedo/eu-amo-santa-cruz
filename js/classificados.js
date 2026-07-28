@@ -80,8 +80,12 @@ App.classificados = (function() {
 
   function formatDate(dateStr) {
     if (!dateStr) return '';
-    var parts = dateStr.split('-');
-    if (parts.length === 3) return parts[2] + '/' + parts[1] + '/' + parts[0];
+    var d = new Date(dateStr);
+    if (!isNaN(d)) {
+      return String(d.getDate()).padStart(2, '0') + '/' +
+             String(d.getMonth() + 1).padStart(2, '0') + '/' +
+             d.getFullYear();
+    }
     return dateStr;
   }
 
