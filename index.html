@@ -18,7 +18,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 <title>Eu amo Santa Cruz</title>
-<link rel="stylesheet" href="css/style.css?v=34">
+<link rel="stylesheet" href="css/style.css?v=43">
 </head>
 <body>
 <div id="app">
@@ -58,6 +58,11 @@
           <span class="stat-number" id="statProfissionais">0</span>
           <span class="stat-label">Profissionais</span>
         </div>
+        <div class="stat-card" data-page="eventos">
+          <span class="stat-icon material-icons-round">event</span>
+          <span class="stat-number" id="statEventos">0</span>
+          <span class="stat-label">Eventos</span>
+        </div>
       </div>
 
 
@@ -82,6 +87,13 @@
             <a href="#" class="home-section-link" data-page="profissionais">Ver todos</a>
           </div>
           <div class="home-prof-scroll" id="homeProf"></div>
+        </section>
+        <section class="home-section">
+          <div class="home-section-header">
+            <h3>Próximos Eventos</h3>
+            <a href="#" class="home-section-link" data-page="eventos">Ver todos</a>
+          </div>
+          <div class="home-eventos-scroll" id="homeEventos"></div>
         </section>
       </div>
     </section>
@@ -164,6 +176,22 @@
       </button>
     </section>
 
+    <!-- EVENTOS -->
+    <section id="page-eventos" class="page">
+      <div class="page-header">
+        <h2><span class="material-icons-round">event</span> Agenda de Eventos</h2>
+        <div class="page-header-actions">
+          <button class="btn-filter material-icons-round" id="myEventosBtn" title="Meus Eventos">lock</button>
+        </div>
+      </div>
+      <div class="card-grid" id="eventosGrid">
+        <div class="loading-spinner"><span class="material-icons-round">sync</span> Carregando...</div>
+      </div>
+      <button class="fab" id="fabEventos" title="Criar Evento">
+        <span class="material-icons-round">add</span>
+      </button>
+    </section>
+
     <!-- CONFIG -->
     <section id="page-config" class="page">
       <div class="page-header">
@@ -201,7 +229,7 @@
       <div class="config-section">
         <h3>Como Configurar</h3>
         <ol style="font-size:13px;color:var(--text-secondary);line-height:1.8;padding-left:20px">
-          <li>Crie uma planilha no Google Sheets com 3 abas: <strong>Radios</strong>, <strong>Classificados</strong>, <strong>Profissionais</strong></li>
+          <li>Crie uma planilha no Google Sheets com abas: <strong>Radios</strong>, <strong>Classificados</strong>, <strong>Profissionais</strong>, <strong>Eventos</strong></li>
           <li>Na primeira linha de cada aba, coloque os cabeçalhos (veja o arquivo <code>Code.gs</code>)</li>
           <li>Vá em <strong>Extensões → Apps Script</strong></li>
           <li>Cole o conteúdo do arquivo <code>google-apps-script/Code.gs</code></li>
@@ -247,6 +275,10 @@
       <span class="material-icons-round">work</span>
       <span class="nav-label">Profissionais</span>
     </a>
+    <a href="#" class="nav-item" data-page="eventos">
+      <span class="material-icons-round">event</span>
+      <span class="nav-label">Eventos</span>
+    </a>
   </nav>
 
   <div id="modalOverlay" class="modal-overlay hidden">
@@ -262,11 +294,12 @@
   <div id="toast" class="toast hidden"></div>
 </div>
 
-<script src="js/api.js?v=34"></script>
-<script src="js/radios.js?v=34"></script>
-<script src="js/classificados.js?v=34"></script>
-<script src="js/profissionais.js?v=34"></script>
-<script src="js/auth.js?v=34"></script>
-<script src="js/app.js?v=34"></script>
+<script src="js/api.js?v=43"></script>
+<script src="js/radios.js?v=43"></script>
+<script src="js/classificados.js?v=43"></script>
+<script src="js/profissionais.js?v=43"></script>
+<script src="js/eventos.js?v=43"></script>
+<script src="js/auth.js?v=43"></script>
+<script src="js/app.js?v=43"></script>
 </body>
 </html>
