@@ -26,11 +26,11 @@
     <div class="header-inner">
       <img class="header-logo" src="assets/logo-cabecalho.jpg" alt="Santa Cruz">
       <h1 class="header-title">Eu amo Santa Cruz</h1>
-      <span class="user-badge hidden" id="userBadge"><span class="user-badge-name" id="userName"></span></span>
       <button class="header-btn" id="authBtn" title="Minha Conta"><span class="material-icons-round" style="font-size:22px">person</span></button>
       <button class="header-btn material-icons-round" id="refreshBtn" title="Atualizar">refresh</button>
       <button class="header-btn material-icons-round" id="configBtn" title="Configurar">settings</button>
     </div>
+    <div class="user-badge hidden" id="userBadge"><span class="user-badge-name" id="userName"></span></div>
   </header>
 
   <div id="demoBanner" class="demo-banner hidden">
@@ -42,43 +42,6 @@
     <!-- HOME -->
     <section id="page-home" class="page active">
 
-      <div class="weather-widget" id="weatherWidget">
-        <div class="weather-loading" id="weatherLoading">
-          <span class="material-icons-round">cloud</span> Carregando clima...
-        </div>
-        <div class="weather-content hidden" id="weatherContent">
-          <div class="weather-main">
-            <div class="weather-icon-wrap">
-              <span class="weather-icon material-icons-round" id="weatherIcon">wb_sunny</span>
-            </div>
-            <div class="weather-info">
-              <div class="weather-temp" id="weatherTemp">--°C</div>
-              <div class="weather-desc" id="weatherDesc">Carregando...</div>
-            </div>
-            <div class="weather-location">
-              <span class="material-icons-round" style="font-size:14px">location_on</span>
-              Santa Cruz do Rio Pardo/SP
-            </div>
-          </div>
-          <div class="weather-details">
-            <div class="weather-detail">
-              <span class="material-icons-round">water_drop</span>
-              <span class="weather-detail-label">Umidade</span>
-              <span class="weather-detail-value" id="weatherHumidity">--%</span>
-            </div>
-            <div class="weather-detail">
-              <span class="material-icons-round">air</span>
-              <span class="weather-detail-label">Vento</span>
-              <span class="weather-detail-value" id="weatherWind">-- km/h</span>
-            </div>
-            <div class="weather-detail">
-              <span class="material-icons-round">compress</span>
-              <span class="weather-detail-label">Pressão</span>
-              <span class="weather-detail-value" id="weatherPressure">-- hPa</span>
-            </div>
-          </div>
-        </div>
-      </div>
       <div class="quick-stats" id="quickStats">
         <div class="stat-card" data-page="radios">
           <span class="stat-icon material-icons-round">radio</span>
