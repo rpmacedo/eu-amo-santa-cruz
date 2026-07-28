@@ -1,12 +1,13 @@
 // -------------------------------------------------------
-// BACKEND Eu amo Santa Cruz - Google Apps Script
+// BACKEND Eu amo Santa Cruz - Google Apps Script (v3 - Eventos com imagem)
 // -------------------------------------------------------
 // INSTRUCOES:
-// 1. Crie uma planilha no Google Sheets com 4 abas:
+// 1. Crie uma planilha no Google Sheets com 5 abas:
 //    - "Radios"      | id | nome | logoUrl | streamUrl | descricao | ativo
 //    - "Classificados" | id | titulo | descricao | preco | imagens | contato | telefone | categoria | data | ativo | senha | userId
 //    - "Profissionais" | id | nome | profissao | telefone | whatsapp | descricao | foto | bairro | cidade | data | ativo | senha | userId
 //    - "Usuarios"    | id | nome | email | senha | telefone | created_at
+//    - "Eventos"     | id | titulo | descricao | data | horario | local | imagens | telefone | userId | ativo
 // 2. Salve esta planilha e COPIE O ID DA URL (entre /d/ e /edit)
 // 3. Cole o ID na variavel SHEET_ID abaixo
 // 4. Va em "Implantar" > "Nova implantacao" > "Aplicativo web"
@@ -24,7 +25,8 @@ var HEADERS = {
   Radios: ['id', 'nome', 'logoUrl', 'streamUrl', 'descricao', 'ativo'],
   Classificados: ['id', 'titulo', 'descricao', 'preco', 'imagens', 'contato', 'telefone', 'categoria', 'data', 'ativo', 'senha', 'userId'],
   Profissionais: ['id', 'nome', 'profissao', 'telefone', 'whatsapp', 'descricao', 'foto', 'bairro', 'cidade', 'data', 'ativo', 'senha', 'userId'],
-  Usuarios: ['id', 'nome', 'email', 'senha', 'telefone', 'created_at']
+  Usuarios: ['id', 'nome', 'email', 'senha', 'telefone', 'created_at'],
+  Eventos: ['id', 'titulo', 'descricao', 'data', 'horario', 'local', 'imagens', 'telefone', 'userId', 'ativo']
 };
 
 function getSheet_(name) {
@@ -67,11 +69,13 @@ function doGet(e) {
       output = { success: true, data: readSheet_('Classificados') };
     } else if (action === 'getProfissionais') {
       output = { success: true, data: readSheet_('Profissionais') };
+    } else if (action === 'getEventos') {
+      output = { success: true, data: readSheet_('Eventos') };
     } else {
       output = {
         success: true,
         message: 'API Eu amo Santa Cruz funcionando! Use ?action=...',
-        endpoints: ['test', 'getRadios', 'getClassificados', 'getProfissionais', 'registerUser', 'loginUser']
+        endpoints: ['test', 'getRadios', 'getClassificados', 'getProfissionais', 'getEventos', 'registerUser', 'loginUser']
       };
     }
   } catch (err) {
@@ -103,6 +107,11 @@ function doPost(e) {
       data.ativo = 'Sim';
       addRow_('Profissionais', data);
       output = { success: true, message: 'Profissional cadastrado!', id: data.id };
+    } else if (action === 'addEvento') {
+      data.id = 'E' + Date.now();
+      data.ativo = 'Sim';
+      addRow_('Eventos', data);
+      output = { success: true, message: 'Evento adicionado!', id: data.id };
     } else if (action === 'updateClassificado') {
       updateRow_('Classificados', data);
       output = { success: true, message: 'Classificado atualizado!' };
@@ -115,6 +124,12 @@ function doPost(e) {
     } else if (action === 'deleteProfissional') {
       deleteRow_('Profissionais', data.id);
       output = { success: true, message: 'Profissional excluido!' };
+    } else if (action === 'updateEvento') {
+      updateRow_('Eventos', data);
+      output = { success: true, message: 'Evento atualizado!' };
+    } else if (action === 'deleteEvento') {
+      deleteRow_('Eventos', data.id);
+      output = { success: true, message: 'Evento excluido!' };
     } else if (action === 'registerUser') {
       output = registerUser_(data);
     } else if (action === 'loginUser') {
@@ -134,7 +149,7 @@ function doPost(e) {
 function verificarAbas_() {
   var ss = SHEET_ID ? SpreadsheetApp.openById(SHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
   var resultado = {};
-  ['Radios', 'Classificados', 'Profissionais', 'Usuarios'].forEach(function(nome) {
+  ['Radios', 'Classificados', 'Profissionais', 'Usuarios', 'Eventos'].forEach(function(nome) {
     var sheet = ss.getSheetByName(nome);
     if (sheet) {
       resultado[nome] = { existe: true, linhas: sheet.getLastRow() - 1 };
@@ -187,7 +202,14 @@ function readSheet_(sheetName) {
     for (var c = 0; c < actualHeaders.length; c++) {
       if (colMap[c]) {
         var val = row[c];
-        // Converte tudo para texto para evitar erro de tipo no JavaScript
+        if (val instanceof Date) {
+          if (val.getFullYear() === 1899) {
+            // Apenas horario (ex: 19:00)
+            val = Utilities.formatDate(val, Session.getScriptTimeZone(), 'HH:mm');
+          } else {
+            val = Utilities.formatDate(val, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+          }
+        }
         if (val !== null && val !== undefined) obj[colMap[c]] = String(val);
         else obj[colMap[c]] = '';
       }
