@@ -6,6 +6,7 @@ App.nav = (function() {
     radios: document.getElementById('page-radios'),
     classificados: document.getElementById('page-classificados'),
     profissionais: document.getElementById('page-profissionais'),
+    eventos: document.getElementById('page-eventos'),
     config: document.getElementById('page-config')
   };
 
@@ -27,8 +28,10 @@ App.nav = (function() {
 
     var fab = document.getElementById('fabClassif');
     var fabProf = document.getElementById('fabProf');
+    var fabEventos = document.getElementById('fabEventos');
     if (fab) fab.style.display = (pageName === 'classificados') ? 'flex' : 'none';
     if (fabProf) fabProf.style.display = (pageName === 'profissionais') ? 'flex' : 'none';
+    if (fabEventos) fabEventos.style.display = (pageName === 'eventos') ? 'flex' : 'none';
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -115,27 +118,33 @@ function loadAllData() {
   Promise.all([
     App.api.getRadios(),
     App.api.getClassificados(),
-    App.api.getProfissionais()
+    App.api.getProfissionais(),
+    App.api.getEventos()
   ]).then(function(results) {
     var radios = results[0] || [];
     var classif = results[1] || [];
     var prof = results[2] || [];
+    var eventos = results[3] || [];
 
     App.radios.render(radios);
     App.classificados.render(classif);
     App.profissionais.render(prof);
+    App.eventos.render(eventos);
 
     // Home previews
     renderHomeRadios(radios.slice(0, 3));
     renderHomeClassif(classif.slice(0, 6));
     renderHomeProf(prof);
+    renderHomeEventos(eventos);
     // Home stats
     var statRadios = document.getElementById('statRadios');
     var statClassif = document.getElementById('statClassificados');
     var statProf = document.getElementById('statProfissionais');
+    var statEventos = document.getElementById('statEventos');
     if (statRadios) statRadios.textContent = radios.length;
     if (statClassif) statClassif.textContent = classif.length;
     if (statProf) statProf.textContent = prof.length;
+    if (statEventos) statEventos.textContent = eventos.length;
 
   }).catch(function() {});
 }
@@ -206,6 +215,74 @@ function renderHomeProf(items) {
   }
   container.innerHTML = html;
 }
+function renderHomeEventos(items) {
+  var container = document.getElementById('homeEventos');
+  if (!container) return;
+  var html = '';
+  var upcoming = items.slice().sort(function(a, b) { return new Date(a.data) - new Date(b.data); });
+  for (var i = 0; i < upcoming.length; i++) {
+    var e = upcoming[i];
+    var evDate = e.data ? formatDateSimple(e.data) : '';
+    var day = evDate ? evDate.split('/')[0] : '';
+    var months = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+    var month = '';
+    if (evDate) {
+      var m = parseInt(evDate.split('/')[1], 10) - 1;
+      if (months[m]) month = months[m];
+    }
+    var imgHtml = '';
+    if (e.imagens) {
+      var imgs = e.imagens.split('|');
+      if (imgs.length > 0 && (imgs[0].startsWith('data:') || imgs[0].startsWith('http')))
+        imgHtml = '<img class="evento-image" src="' + escapeHtml(imgs[0]) + '" alt="" loading="lazy">';
+    }
+    html +=
+      '<div class="evento-card" data-id="' + e.id + '" onclick="App.eventos.showDetailById(\'' + e.id + '\')">' +
+        (imgHtml || '') +
+        '<div class="evento-date-badge">' +
+          '<span class="evento-date-day">' + day + '</span>' +
+          '<span class="evento-date-month">' + month + '</span>' +
+        '</div>' +
+        '<div class="evento-body">' +
+          '<div class="evento-title">' + escapeHtml(e.titulo) + '</div>' +
+          '<div class="evento-info"><span class="material-icons-round">schedule</span> ' + escapeHtml(formatTimeSimple(e.horario || '')) + '</div>' +
+        '</div>' +
+      '</div>';
+  }
+  container.innerHTML = html;
+}
+
+function formatDateSimple(dateStr) {
+  if (!dateStr) return '';
+  var d = new Date(dateStr);
+  if (!isNaN(d)) {
+    return String(d.getDate()).padStart(2, '0') + '/' +
+           String(d.getMonth() + 1).padStart(2, '0') + '/' +
+           d.getFullYear();
+  }
+  var m = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return m[3] + '/' + m[2] + '/' + m[1];
+  m = dateStr.match(/(\w{3}) (\w{3}) (\d{2}) (\d{4})/);
+  if (m) {
+    var months = {'Jan':'01','Feb':'02','Mar':'03','Apr':'04','May':'05','Jun':'06',
+                  'Jul':'07','Aug':'08','Sep':'09','Oct':'10','Nov':'11','Dec':'12'};
+    return m[3] + '/' + (months[m[2]] || '01') + '/' + m[4];
+  }
+  return dateStr;
+}
+
+function formatTimeSimple(timeStr) {
+  if (!timeStr) return '';
+  var d = new Date(timeStr);
+  if (!isNaN(d)) {
+    return String(d.getHours()).padStart(2, '0') + ':' +
+           String(d.getMinutes()).padStart(2, '0');
+  }
+  var m = timeStr.match(/(\d{2}):(\d{2})/);
+  if (m) return m[1] + ':' + m[2];
+  return timeStr;
+}
+
 function formatPrice(val) {
   if (!val) return 'Grátis';
   var s = String(val).replace(/[R$\s]/g, '').replace(/\./g, '');
@@ -364,7 +441,18 @@ document.addEventListener('DOMContentLoaded', function() {
   App.radios.init();
   App.classificados.init();
   App.profissionais.init();
+  App.eventos.init();
   initConfigPage();
+
+  var myEventosBtn = document.getElementById('myEventosBtn');
+  if (myEventosBtn) {
+    myEventosBtn.addEventListener('click', function() {
+      if (!App.auth.isLoggedIn()) { App.auth.showLoginForm(); return; }
+      var myItems = App.eventos.getMyItems(App.auth.getCurrentUser().id);
+      if (myItems.length === 0) { App.showToast('Voce nao tem eventos cadastrados'); return; }
+      App.eventos.render(myItems);
+    });
+  }
 
   loadAllData();
   if ('serviceWorker' in navigator) {

@@ -44,6 +44,11 @@ var DEMO = {
     { id: 'P2', nome: 'Pedro Santos', profissao: 'Pedreiro', telefone: '(81) 99999-0011', whatsapp: 'Sim', descricao: 'Construcao e reformas, acabamento de qualidade', foto: '', bairro: 'Sao Miguel', cidade: 'Santa Cruz do Capibaribe', data: '2026-07-19', ativo: 'Sim', senha: '' },
     { id: 'P3', nome: 'Maria Oliveira', profissao: 'Diarista', telefone: '(81) 99999-0012', whatsapp: 'Sim', descricao: 'Limpeza e organizacao residencial, horario flexivel', foto: '', bairro: 'Bairro Novo', cidade: 'Santa Cruz do Capibaribe', data: '2026-07-18', ativo: 'Sim', senha: '' },
     { id: 'P4', nome: 'Carlos Freitas', profissao: 'Frete e Mudancas', telefone: '(81) 99999-0013', whatsapp: 'Sim', descricao: 'Fretes e mudancas em geral, carro fechado', foto: '', bairro: 'Centro', cidade: 'Santa Cruz do Capibaribe', data: '2026-07-17', ativo: 'Sim', senha: '' }
+  ],
+  eventos: [
+    { id: 'E1', titulo: 'Festa Julina', descricao: 'Arraia com comidas tipicas, forro ao vivo e quadrilha', data: '2026-08-15', horario: '19:00', local: 'Praca Central', imagens: '', telefone: '(81) 99999-0100', userId: '', ativo: 'Sim' },
+    { id: 'E2', titulo: 'Feira de Artesanato', descricao: 'Artesanato local, comidas e apresentacoes culturais', data: '2026-08-20', horario: '09:00', local: 'Rua Principal', imagens: '', telefone: '(81) 99999-0101', userId: '', ativo: 'Sim' },
+    { id: 'E3', titulo: 'Show de Rock', descricao: 'Bandas locais se apresentam no anfiteatro municipal', data: '2026-09-05', horario: '20:00', local: 'Anfiteatro Municipal', imagens: '', telefone: '(81) 99999-0102', userId: '', ativo: 'Sim' }
   ]
 };
 
@@ -161,6 +166,33 @@ App.api = {
     var result = await this.fetchData('getProfissionais');
     if (result.demo || !result.data || result.data.length === 0) return DEMO.profissionais.filter(function(p) { return p.ativo === 'Sim'; });
     return result.data;
+  },
+
+  async getEventos() {
+    var result = await this.fetchData('getEventos');
+    if (result.demo || !result.data || result.data.length === 0) return DEMO.eventos.filter(function(e) { return e.ativo === 'Sim'; });
+    return result.data;
+  },
+
+  async addEvento(data) {
+    data.id = 'E' + Date.now();
+    data.ativo = 'Sim';
+    var result = await this.sendData('addEvento', data);
+    DEMO.eventos.unshift(data);
+    return { success: true, demo: result.demo, error: result.error };
+  },
+
+  async updateEvento(data) {
+    var result = await this.sendData('updateEvento', data);
+    var idx = DEMO.eventos.findIndex(function(e) { return e.id === data.id; });
+    if (idx >= 0) DEMO.eventos[idx] = data;
+    return { success: true, demo: result.demo, error: result.error };
+  },
+
+  async deleteEvento(id) {
+    var result = await this.sendData('deleteEvento', { id: id, action: 'deleteEvento' });
+    DEMO.eventos = DEMO.eventos.filter(function(e) { return e.id !== id; });
+    return { success: true, demo: result.demo, error: result.error };
   },
 
   async addClassificado(data) {
